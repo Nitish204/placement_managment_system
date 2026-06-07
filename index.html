@@ -1,0 +1,48 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="hero-section">
+    <div class="container text-center">
+        <h1 class="hero-title animate-fadeInUp">
+            <i class="fas fa-chalkboard-user me-3"></i>Campus Placements
+        </h1>
+        <p class="hero-subtitle animate-fadeInUp" style="animation-delay: 0.1s;">
+            Bridging the gap between talented students and top recruiters
+        </p>
+        <div class="animate-fadeInUp" style="animation-delay: 0.2s;">
+            <a href="{{ url_for('login') }}" class="btn btn-gradient btn-lg me-3">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <a href="{{ url_for('register_student') }}" class="btn btn-outline-gradient btn-lg">
+                <i class="fas fa-user-graduate"></i> Register as Student
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center">
+                <i class="fas fa-users fa-3x" style="color: #667eea;"></i>
+                <h4 class="mt-3">For Students</h4>
+                <p>Apply to dream companies, track applications, and upload your resume for AI-powered screening.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center">
+                <i class="fas fa-building fa-3x" style="color: #667eea;"></i>
+                <h4 class="mt-3">For Companies</h4>
+                <p>Post job openings, screen candidates, and manage recruitment with our smart analytics.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center">
+                <i class="fas fa-chart-line fa-3x" style="color: #667eea;"></i>
+                <h4 class="mt-3">Analytics Dashboard</h4>
+                <p>Get real-time placement insights, branch-wise statistics, and hiring trends.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
