@@ -41,29 +41,3 @@ A comprehensive web-based platform to streamline campus recruitment processes. I
 | Authentication | Werkzeug (password hashing)      |
 | File Handling | PyPDF2 (PDF text extraction)      |
 | Deployment  | Render / Railway / PythonAnywhere   |
-
-## 📁 Project Structure
-├── app.py # Main Flask application
-├── requirements.txt # Python dependencies
-├── Procfile # Process file for deployment
-├── runtime.txt # Python version specification
-├── prepare_db.py # Database initialization script
-├── generate_students.py # Script to populate random students
-├── templates/ # All HTML templates
-│ ├── base.html
-│ ├── index.html
-│ ├── login.html
-│ ├── register_student.html
-│ ├── register_company.html
-│ ├── student_dashboard.html
-│ ├── company_dashboard.html
-│ ├── post_job.html
-│ ├── view_applications.html
-│ ├── admin_dashboard.html
-│ ├── admin_students.html
-│ ├── admin_companies.html
-│ ├── admin_jobs.html
-│ ├── admin_placements.html
-│ └── bulk_upload.html
-├── uploads/ # Folder for uploaded resumes (auto-created)
-└── campus_placement.db # SQLite database (created on first run)
