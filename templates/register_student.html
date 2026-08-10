@@ -1,68 +1,92 @@
 <!-- templates/register_student.html -->
 {% extends "base.html" %}
+{% block title %}Student Registration · Campus Placements{% endblock %}
 {% block content %}
-<div class="container mt-4 pt-3">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="glass-card p-4 animate-fadeInUp">
-                <div class="text-center mb-4">
-                    <i class="fas fa-user-graduate fa-3x" style="color: #667eea;"></i>
-                    <h3 class="mt-2">Student Registration</h3>
-                    <p class="text-muted">Create your account to start applying</p>
+<style>
+@keyframes cardIn { 0%{opacity:0;transform:translateY(40px) scale(0.96);} 100%{opacity:1;transform:translateY(0) scale(1);} }
+@keyframes robotDropIn { 0%{opacity:0;transform:translateY(-50px) scale(0.5) rotate(-8deg);} 60%{opacity:1;transform:translateY(6px) scale(1.05) rotate(3deg);} 100%{opacity:1;transform:translateY(0) scale(1) rotate(0);} }
+@keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
+@keyframes glowPulse { 0%,100%{filter:drop-shadow(0 0 6px #4dd0c188);} 50%{filter:drop-shadow(0 0 14px #4dd0c1cc);} }
+
+.reg-wrap { display:flex; flex-direction:column; align-items:center; padding: 30px 16px 10px; }
+.mini-robot { width:88px; height:88px; margin-bottom:-22px; z-index:2; opacity:0; animation: robotDropIn 0.8s cubic-bezier(0.22,1,0.36,1) 0.1s both, float 3.5s ease-in-out 0.9s infinite, glowPulse 3.5s ease-in-out 0.9s infinite; }
+.reg-card { width:100%; max-width:760px; padding: 44px 30px 30px; opacity:0; animation: cardIn 0.7s cubic-bezier(0.22,1,0.36,1) 0.35s both; }
+</style>
+
+<div class="reg-wrap">
+    <div class="mini-robot">
+        <svg width="88" height="88" viewBox="0 0 120 120">
+            <ellipse cx="60" cy="112" rx="28" ry="5" fill="#00000033"/>
+            <rect x="30" y="30" width="60" height="55" rx="18" fill="#f5f3ff"/>
+            <rect x="30" y="30" width="60" height="55" rx="18" fill="none" stroke="#99f6e4" stroke-width="2"/>
+            <circle cx="60" cy="14" r="5" fill="#5eead4"/>
+            <line x1="60" y1="19" x2="60" y2="30" stroke="#5eead4" stroke-width="3"/>
+            <rect x="18" y="50" width="22" height="10" rx="5" fill="#ccfbf1"/>
+            <circle cx="16" cy="55" r="7" fill="#f5f3ff" stroke="#5eead4" stroke-width="2"/>
+            <rect x="80" y="50" width="22" height="10" rx="5" fill="#ccfbf1"/>
+            <circle cx="104" cy="55" r="7" fill="#f5f3ff" stroke="#5eead4" stroke-width="2"/>
+            <rect x="43" y="50" width="15" height="14" rx="6" fill="#2d1b4e"/>
+            <rect x="62" y="50" width="15" height="14" rx="6" fill="#2d1b4e"/>
+            <path d="M 48 74 Q 60 82 72 74" stroke="#2d1b4e" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+    </div>
+
+    <div class="glass-card reg-card">
+        <div class="text-center mb-4">
+            <h3 class="mt-2">Student Registration</h3>
+            <p class="text-muted">Create your account to start applying</p>
+        </div>
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Full Name *</label>
+                    <input type="text" name="full_name" class="form-control" required>
                 </div>
-                <form method="POST">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Full Name *</label>
-                            <input type="text" name="full_name" class="form-control" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Email *</label>
-                            <input type="email" name="email" class="form-control" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Password *</label>
-                            <input type="password" name="password" class="form-control" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Roll Number *</label>
-                            <input type="text" name="roll_number" class="form-control" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Branch</label>
-                            <select name="branch" class="form-select">
-                                <option value="Computer Science">Computer Science</option>
-                                <option value="Information Technology">Information Technology</option>
-                                <option value="Electronics">Electronics</option>
-                                <option value="Mechanical">Mechanical</option>
-                                <option value="Civil">Civil</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">CGPA</label>
-                            <input type="number" step="0.01" name="cgpa" class="form-control">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Passing Year</label>
-                            <input type="number" name="passing_year" class="form-control">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Phone</label>
-                            <input type="tel" name="phone" class="form-control">
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Skills (comma separated)</label>
-                            <input type="text" name="skills" class="form-control" placeholder="Python, Java, SQL, React">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-gradient w-100">
-                        <i class="fas fa-user-plus"></i> Register
-                    </button>
-                </form>
-                <div class="text-center mt-3">
-                    <a href="{{ url_for('login') }}" class="text-decoration-none">Already have an account? Login</a>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Email *</label>
+                    <input type="email" name="email" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Password *</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Roll Number *</label>
+                    <input type="text" name="roll_number" class="form-control" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Branch</label>
+                    <select name="branch" class="form-select">
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Civil">Civil</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">CGPA</label>
+                    <input type="number" step="0.01" name="cgpa" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Passing Year</label>
+                    <input type="number" name="passing_year" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" name="phone" class="form-control">
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Skills (comma separated)</label>
+                    <input type="text" name="skills" class="form-control" placeholder="Python, Java, SQL, React">
                 </div>
             </div>
+            <button type="submit" class="btn btn-gradient w-100">
+                <i class="fas fa-user-plus"></i> Register
+            </button>
+        </form>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('login') }}" class="text-decoration-none">Already have an account? Login</a>
         </div>
     </div>
 </div>
