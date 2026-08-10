@@ -34,27 +34,31 @@
         </div>
         
         <div class="col-lg-9">
+            <div class="page-header">
+                <div>
+                    <h3>Welcome back, {{ student.full_name.split(' ')[0] }} 👋</h3>
+                    <p class="page-sub">Here's how your applications are looking today.</p>
+                </div>
+            </div>
+
             <!-- Statistics Cards -->
             <div class="row g-4 mb-4">
                 <div class="col-md-4">
                     <div class="stat-card">
-                        <i class="fas fa-file-alt"></i>
-                        <h3>{{ total_applications }}</h3>
-                        <p>Total Applications</p>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-1), var(--accent-2));"><i class="fas fa-file-alt"></i></div>
+                        <div class="stat-body"><h3>{{ total_applications }}</h3><p>Total Applications</p></div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="stat-card">
-                        <i class="fas fa-star"></i>
-                        <h3>{{ shortlisted }}</h3>
-                        <p>Shortlisted</p>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, var(--accent-3));"><i class="fas fa-star"></i></div>
+                        <div class="stat-body"><h3>{{ shortlisted }}</h3><p>Shortlisted</p></div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="stat-card">
-                        <i class="fas fa-trophy"></i>
-                        <h3>{{ placed }}</h3>
-                        <p>Placed</p>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-4), #0f766e);"><i class="fas fa-trophy"></i></div>
+                        <div class="stat-body"><h3>{{ placed }}</h3><p>Placed</p></div>
                     </div>
                 </div>
             </div>
