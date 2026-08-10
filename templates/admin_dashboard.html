@@ -24,12 +24,19 @@
         </div>
         
         <div class="col-lg-9">
+            <div class="page-header">
+                <div>
+                    <h3>Overview</h3>
+                    <p class="page-sub">Placement season at a glance.</p>
+                </div>
+            </div>
+
             <!-- Stats Row -->
             <div class="row g-4 mb-4">
-                <div class="col-md-3"><div class="stat-card"><i class="fas fa-users"></i><h3>{{ total_students }}</h3><p>Students</p></div></div>
-                <div class="col-md-3"><div class="stat-card"><i class="fas fa-building"></i><h3>{{ total_companies }}</h3><p>Companies</p></div></div>
-                <div class="col-md-3"><div class="stat-card"><i class="fas fa-briefcase"></i><h3>{{ total_jobs }}</h3><p>Jobs Posted</p></div></div>
-                <div class="col-md-3"><div class="stat-card"><i class="fas fa-file-alt"></i><h3>{{ total_applications }}</h3><p>Applications</p></div></div>
+                <div class="col-md-3"><div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-1), var(--accent-2));"><i class="fas fa-users"></i></div><div class="stat-body"><h3>{{ total_students }}</h3><p>Students</p></div></div></div>
+                <div class="col-md-3"><div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-3), #c2410c);"><i class="fas fa-building"></i></div><div class="stat-body"><h3>{{ total_companies }}</h3><p>Companies</p></div></div></div>
+                <div class="col-md-3"><div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-4), #0f766e);"><i class="fas fa-briefcase"></i></div><div class="stat-body"><h3>{{ total_jobs }}</h3><p>Jobs Posted</p></div></div></div>
+                <div class="col-md-3"><div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, var(--accent-3));"><i class="fas fa-file-alt"></i></div><div class="stat-body"><h3>{{ total_applications }}</h3><p>Applications</p></div></div></div>
             </div>
             
             <!-- Placement Analytics -->
@@ -41,9 +48,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="stat-card mb-3">
-                            <i class="fas fa-trophy"></i>
-                            <h3>{{ "%.1f"|format(placement_percentage) }}%</h3>
-                            <p>Overall Placement Rate ({{ placed_count }}/{{ total_students }})</p>
+                            <div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-3), var(--accent-1));"><i class="fas fa-trophy"></i></div>
+                            <div class="stat-body"><h3>{{ "%.1f"|format(placement_percentage) }}%</h3><p>Placement Rate ({{ placed_count }}/{{ total_students }})</p></div>
                         </div>
                         <div class="p-3 rounded" style="background: var(--glass-strong); border:1px solid var(--glass-border);">
                             <h6>Top Hiring Companies</h6>
