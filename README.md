@@ -279,6 +279,18 @@ SECRET_KEY=replace-with-a-long-random-string
 
 ---
 
+## 👤 Default Accounts (seeded on first run)
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@campus.com` | `admin123` |
+| Student | `student@demo.com` | `student123` |
+| Company | `company@demo.com` | `company123` |
+
+> ⚠️ Change or remove these before deploying to production.
+
+---
+
 ## 📁 Project Structure
 
 ```
