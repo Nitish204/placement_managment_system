@@ -1,37 +1,163 @@
 <!-- templates/login.html -->
 {% extends "base.html" %}
+{% block title %}Login · Campus Placements{% endblock %}
 {% block content %}
-<div class="container mt-5 pt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="glass-card p-4 animate-fadeInUp">
-                <div class="text-center mb-4">
-                    <i class="fas fa-lock fa-3x" style="color: #667eea;"></i>
-                    <h3 class="mt-2">Welcome Back</h3>
-                    <p class="text-muted">Login to your account</p>
+<style>
+@keyframes cardIn { 0%{opacity:0;transform:translateY(40px) scale(0.94);} 100%{opacity:1;transform:translateY(0) scale(1);} }
+@keyframes robotDropIn { 0%{opacity:0;transform:translateY(-60px) scale(0.5) rotate(-8deg);} 60%{opacity:1;transform:translateY(8px) scale(1.06) rotate(3deg);} 100%{opacity:1;transform:translateY(0) scale(1) rotate(0);} }
+@keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+@keyframes blink { 0%,90%,100%{transform:scaleY(1);} 95%{transform:scaleY(0.1);} }
+@keyframes sheen { 0%{transform:translateX(-130%) skewX(-12deg);} 100%{transform:translateX(230%) skewX(-12deg);} }
+@keyframes ringPulse { 0%,100%{opacity:0.5;transform:scale(1);} 50%{opacity:1;transform:scale(1.08);} }
+@keyframes glowPulse { 0%,100%{filter:drop-shadow(0 0 6px #a78bfa88);} 50%{filter:drop-shadow(0 0 18px #a78bfacc);} }
+@keyframes riseUp { 0%{transform:translateY(0);opacity:0;} 10%{opacity:0.6;} 100%{transform:translateY(-420px);opacity:0;} }
+
+.login-stage { display:flex; align-items:center; justify-content:center; min-height:82vh; padding: 20px; position: relative; }
+.login-particles { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+.login-particle { position:absolute; border-radius:50%; background:var(--accent-2); }
+
+.robot-wrap { position:relative; width:120px; height:120px; margin-bottom:-30px; z-index:3; opacity:0; animation: robotDropIn 0.9s cubic-bezier(0.22,1,0.36,1) 0.15s both, float 3.5s ease-in-out 1.05s infinite, glowPulse 3.5s ease-in-out 1.05s infinite; }
+.eye { transition: all 0.25s ease; }
+
+.login-card { position:relative; width:380px; max-width:92vw; padding:50px 30px 30px; opacity:0; animation: cardIn 0.7s cubic-bezier(0.22,1,0.36,1) 0.45s both; }
+
+.field-input:focus { outline:none; border-color:var(--accent-2) !important; box-shadow:0 0 0 4px rgba(167,139,250,0.22) !important; }
+.login-btn-wrap { position:relative; overflow:hidden; border-radius:12px; }
+.login-btn-wrap .sheen { position:absolute; top:0; left:0; width:40%; height:100%; background:linear-gradient(120deg,transparent,#ffffff55,transparent); animation: sheen 2.8s ease-in-out infinite; pointer-events:none; }
+.toggle-eye { position:absolute; right:14px; top:41px; cursor:pointer; font-size:12px; color:var(--accent-2); font-weight:600; user-select:none; }
+</style>
+
+<div class="login-stage">
+    <div class="login-particles" id="loginParticles"></div>
+
+    <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:2;">
+        <div class="robot-wrap" id="robotWrap">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+                <ellipse cx="60" cy="112" rx="30" ry="6" fill="#00000033"/>
+                <circle cx="60" cy="57" r="46" fill="none" stroke="#a78bfa" stroke-width="1.5" opacity="0.35" id="focusRing"/>
+                <rect x="30" y="30" width="60" height="55" rx="18" fill="#f5f3ff"/>
+                <rect x="30" y="30" width="60" height="55" rx="18" fill="none" stroke="#c4b5fd" stroke-width="2"/>
+                <circle cx="60" cy="14" r="5" fill="#c4b5fd"/>
+                <line x1="60" y1="19" x2="60" y2="30" stroke="#c4b5fd" stroke-width="3"/>
+                <rect x="18" y="50" width="22" height="10" rx="5" fill="#ddd6fe"/>
+                <circle cx="16" cy="55" r="7" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <rect x="80" y="50" width="22" height="10" rx="5" fill="#ddd6fe"/>
+                <circle cx="104" cy="55" r="7" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <g id="eyeGroup">
+                    <rect x="43" y="48" width="15" height="18" rx="7" fill="#2d1b4e" class="eye" id="eyeL"/>
+                    <rect x="62" y="48" width="15" height="18" rx="7" fill="#2d1b4e" class="eye" id="eyeR"/>
+                    <circle cx="50.5" cy="60" r="1.6" fill="#a78bfa" id="pupilL" opacity="0"/>
+                    <circle cx="69.5" cy="60" r="1.6" fill="#a78bfa" id="pupilR" opacity="0"/>
+                </g>
+                <path id="mouth" d="M 50 72 Q 60 78 70 72" stroke="#2d1b4e" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <div class="glass-card login-card">
+            <h2 style="text-align:center;margin:0 0 4px;font-size:20px;font-weight:600;">Welcome back</h2>
+            <p style="text-align:center;margin:0 0 22px;font-size:12.5px;">Login to your account</p>
+
+            <form method="POST">
+                <div style="margin-bottom:16px">
+                    <label style="font-size:11.5px;font-weight:600;color:var(--text-mid);display:block;margin-bottom:6px">Email address</label>
+                    <input id="emailInput" name="email" type="email" placeholder="you@example.com" class="form-control field-input" required>
                 </div>
-                <form method="POST">
-                    <div class="mb-3">
-                        <label class="form-label"><i class="fas fa-envelope"></i> Email Address</label>
-                        <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label"><i class="fas fa-key"></i> Password</label>
-                        <input type="password" name="password" class="form-control" placeholder="Enter password" required>
-                    </div>
+
+                <div style="margin-bottom:20px;position:relative">
+                    <label style="font-size:11.5px;font-weight:600;color:var(--text-mid);display:block;margin-bottom:6px">Password</label>
+                    <input id="passInput" name="password" type="password" placeholder="Enter password" class="form-control field-input" required>
+                    <span id="toggleEye" class="toggle-eye">show</span>
+                </div>
+
+                <div class="login-btn-wrap">
                     <button type="submit" class="btn btn-gradient w-100">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </button>
-                </form>
-                <hr>
-                <div class="text-center">
-                    <p class="mb-0">New here? 
-                        <a href="{{ url_for('register_student') }}" class="text-decoration-none">Register as Student</a> | 
-                        <a href="{{ url_for('register_company') }}" class="text-decoration-none">Register as Company</a>
-                    </p>
+                    <span class="sheen"></span>
                 </div>
-            </div>
+            </form>
+
+            <p style="text-align:center;font-size:12px;margin:16px 0 0">New here?
+                <a href="{{ url_for('register_student') }}" class="text-decoration-none">Student</a> ·
+                <a href="{{ url_for('register_company') }}" class="text-decoration-none">Company</a>
+            </p>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function(){
+    const particles = document.getElementById('loginParticles');
+    for(let i=0;i<12;i++){
+        const p = document.createElement('div');
+        const size = 3+Math.random()*4;
+        p.className='login-particle';
+        p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;bottom:-10px;opacity:0.45;animation:riseUp ${7+Math.random()*7}s linear infinite ${Math.random()*6}s`;
+        particles.appendChild(p);
+    }
+
+    const emailInput = document.getElementById('emailInput');
+    const passInput = document.getElementById('passInput');
+    const eyeL = document.getElementById('eyeL');
+    const eyeR = document.getElementById('eyeR');
+    const pupilL = document.getElementById('pupilL');
+    const pupilR = document.getElementById('pupilR');
+    const mouth = document.getElementById('mouth');
+    const focusRing = document.getElementById('focusRing');
+    const robotWrap = document.getElementById('robotWrap');
+    const toggleEye = document.getElementById('toggleEye');
+    let focusing = false;
+
+    emailInput.addEventListener('input', () => {
+        const t = Math.min(emailInput.value.length, 20);
+        const shift = (t % 8) - 4;
+        eyeL.style.transform = `translateX(${shift}px)`;
+        eyeR.style.transform = `translateX(${shift}px)`;
+    });
+    emailInput.addEventListener('focus', () => { mouth.setAttribute('d','M 50 74 Q 60 80 70 74'); });
+    emailInput.addEventListener('blur', () => { if(!focusing){ mouth.setAttribute('d','M 50 72 Q 60 78 70 72'); eyeL.style.transform=''; eyeR.style.transform=''; } });
+
+    function lookDeeper(){
+        focusing = true;
+        robotWrap.style.transform = 'translateY(6px) scale(1.08)';
+        eyeL.setAttribute('height','9'); eyeL.setAttribute('y','52');
+        eyeR.setAttribute('height','9'); eyeR.setAttribute('y','52');
+        pupilL.style.opacity = 1; pupilR.style.opacity = 1;
+        mouth.setAttribute('d','M 52 74 Q 60 72 68 74');
+        focusRing.style.animation = 'ringPulse 1.2s ease-in-out infinite';
+        focusRing.style.opacity = '0.7';
+    }
+    function relax(){
+        focusing = false;
+        robotWrap.style.transform = '';
+        eyeL.setAttribute('height','18'); eyeL.setAttribute('y','48');
+        eyeR.setAttribute('height','18'); eyeR.setAttribute('y','48');
+        pupilL.style.opacity = 0; pupilR.style.opacity = 0;
+        mouth.setAttribute('d','M 50 72 Q 60 78 70 72');
+        focusRing.style.animation = '';
+        focusRing.style.opacity = '0.35';
+    }
+    passInput.addEventListener('focus', lookDeeper);
+    passInput.addEventListener('blur', () => { if(passInput.value.length===0) relax(); });
+
+    toggleEye.addEventListener('click', () => {
+        if(passInput.type === 'password'){
+            passInput.type = 'text';
+            toggleEye.textContent = 'hide';
+        } else {
+            passInput.type = 'password';
+            toggleEye.textContent = 'show';
+        }
+    });
+
+    setInterval(() => {
+        if(!focusing){
+            document.getElementById('eyeGroup').style.animation = 'blink 3s ease';
+            setTimeout(()=> document.getElementById('eyeGroup').style.animation = '', 300);
+        }
+    }, 3200);
+})();
+</script>
 {% endblock %}
