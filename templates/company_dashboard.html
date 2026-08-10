@@ -26,20 +26,26 @@
         </div>
         
         <div class="col-lg-9">
+            <div class="page-header">
+                <div>
+                    <h3>{{ company.company_name }} Dashboard</h3>
+                    <p class="page-sub">Track your postings and applicant pipeline.</p>
+                </div>
+                <a href="{{ url_for('post_job') }}" class="btn btn-gradient"><i class="fas fa-plus-circle"></i> Post New Job</a>
+            </div>
+
             <!-- Stats Cards -->
             <div class="row g-4 mb-4">
                 <div class="col-md-6">
                     <div class="stat-card">
-                        <i class="fas fa-briefcase"></i>
-                        <h3>{{ total_jobs }}</h3>
-                        <p>Jobs Posted</p>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-1), var(--accent-2));"><i class="fas fa-briefcase"></i></div>
+                        <div class="stat-body"><h3>{{ total_jobs }}</h3><p>Jobs Posted</p></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="stat-card">
-                        <i class="fas fa-users"></i>
-                        <h3>{{ total_applications }}</h3>
-                        <p>Total Applications</p>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-3), #c2410c);"><i class="fas fa-users"></i></div>
+                        <div class="stat-body"><h3>{{ total_applications }}</h3><p>Total Applications</p></div>
                     </div>
                 </div>
             </div>
