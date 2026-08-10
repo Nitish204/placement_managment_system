@@ -5,7 +5,7 @@
         <div class="col-lg-3 mb-4">
             <div class="sidebar">
                 <div class="text-center mb-4">
-                    <div class="rounded-circle bg-gradient p-3 d-inline-block" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                    <div class="rounded-circle bg-gradient p-3 d-inline-block" style="background: linear-gradient(135deg, var(--accent-1), var(--accent-3));">
                         <i class="fas fa-building fa-2x text-white"></i>
                     </div>
                     <h5 class="mt-3">{{ company.company_name }}</h5>
@@ -17,7 +17,7 @@
                     <li><a href="{{ url_for('post_job') }}"><i class="fas fa-plus-circle"></i> Post New Job</a></li>
                     <li><a href="#my-jobs"><i class="fas fa-briefcase"></i> My Jobs</a></li>
                 </ul>
-                <div class="mt-4 p-3 bg-light rounded">
+                <div class="mt-4 p-3 rounded" style="background: var(--glass-strong); border:1px solid var(--glass-border);">
                     <small class="text-muted">Company Profile</small>
                     <p class="mb-0 small">{{ company.description[:100] }}{% if company.description|length > 100 %}...{% endif %}</p>
                     {% if company.website %}<a href="{{ company.website }}" target="_blank" class="small">Visit Website</a>{% endif %}
