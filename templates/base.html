@@ -152,16 +152,33 @@
         .stat-card .stat-body h3 { font-size: 1.7rem; font-weight: 700; margin-bottom: 2px; line-height: 1.1; }
         .stat-card .stat-body p { font-size: 0.8rem; color: var(--text-low); margin: 0; text-transform: uppercase; letter-spacing: 0.05em; }
 
-        /* Buttons */
-        .btn-gradient { background: var(--accent-soft); border: none; color: var(--accent-1); padding: 10px 22px; border-radius: 10px; font-weight: 600; font-size: 0.92rem; transition: all 0.2s ease; position: relative; }
-        .btn-gradient:hover { background: var(--accent-soft-strong); transform: translateY(-1px); color: var(--accent-1); }
-        .btn-gradient:active { transform: translateY(0) scale(0.98); }
-        .btn-outline-gradient { background: transparent; border: 1.5px solid var(--glass-border); color: var(--text-hi); border-radius: 10px; padding: 8.5px 20px; font-weight: 600; font-size: 0.92rem; transition: all 0.2s ease; }
-        .btn-outline-gradient:hover { background: var(--glass-strong); border-color: var(--text-low); color: var(--text-hi); }
+        /* Buttons — premium, layered depth + shine sweep */
+        .btn-gradient {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: linear-gradient(120deg, var(--accent-1), var(--accent-3));
+            border: none; color: #2A1600; padding: 11px 26px; border-radius: 999px;
+            font-weight: 700; font-size: 0.92rem; letter-spacing: 0.01em;
+            transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease;
+            position: relative; overflow: hidden; isolation: isolate;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 10px 22px -10px rgba(232,150,12,0.55);
+        }
+        .btn-gradient::before {
+            content: ''; position: absolute; inset: 0; z-index: -1;
+            background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.55) 48%, rgba(255,255,255,0.55) 52%, transparent 70%);
+            transform: translateX(-120%); transition: transform 0.65s cubic-bezier(0.22,1,0.36,1);
+        }
+        .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 18px 34px -12px rgba(232,150,12,0.6); color: #2A1600; }
+        .btn-gradient:hover::before { transform: translateX(120%); }
+        .btn-gradient:active { transform: translateY(0) scale(0.97); }
 
-        /* Solid CTA — used sparingly for the single primary action per view */
-        .btn-solid { background: var(--accent-2); border: none; color: #fff; padding: 10px 22px; border-radius: 10px; font-weight: 600; font-size: 0.92rem; transition: all 0.2s ease; }
-        .btn-solid:hover { background: #1F2937; transform: translateY(-1px); color: #fff; }
+        .btn-outline-gradient {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--glass); border: 1.5px solid var(--glass-border); color: var(--text-hi);
+            border-radius: 999px; padding: 9.5px 24px; font-weight: 600; font-size: 0.92rem;
+            transition: all 0.3s cubic-bezier(0.22,1,0.36,1); box-shadow: var(--shadow-soft);
+        }
+        .btn-outline-gradient:hover { transform: translateY(-2px); border-color: transparent; background: linear-gradient(120deg, var(--accent-1), var(--accent-3)); color: #2A1600; box-shadow: 0 16px 30px -12px rgba(232,150,12,0.5); }
+        .btn-outline-gradient:active { transform: translateY(0) scale(0.97); }
 
         /* Tables */
         .custom-table { background: var(--glass); border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 4px 20px rgba(30,27,18,0.08); }
@@ -263,7 +280,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
                         {% if session.user_id %}
                             <li class="nav-item d-flex align-items-center me-1">
                                 <span class="role-badge role-{{ session.user_role }}">
@@ -272,25 +289,17 @@
                                 </span>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('dashboard') }}">
-                                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                                </a>
+                                <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('logout') }}">
-                                    <i class="fas fa-sign-out-alt"></i> Logout
-                                </a>
+                            <li class="nav-item ms-lg-1">
+                                <a class="btn-outline-gradient" href="{{ url_for('logout') }}">Logout</a>
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('login') }}">
-                                    <i class="fas fa-sign-in-alt"></i> Login
-                                </a>
+                                <a class="nav-link" href="{{ url_for('login') }}">Login</a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    <i class="fas fa-user-plus"></i> Register
-                                </a>
+                            <li class="nav-item dropdown ms-lg-1">
+                                <a class="btn-gradient dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Get started</a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li><a class="dropdown-item" href="{{ url_for('register_student') }}">As Student</a></li>
                                     <li><a class="dropdown-item" href="{{ url_for('register_company') }}">As Company</a></li>
