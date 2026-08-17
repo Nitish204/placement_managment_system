@@ -104,8 +104,8 @@
             datasets: [{
                 label: 'Students Placed',
                 data: {{ branch_data|tojson }},
-                backgroundColor: 'rgba(167, 139, 250, 0.55)',
-                borderColor: '#a78bfa',
+                backgroundColor: 'rgba(232, 150, 12, 0.55)',
+                borderColor: '#E8960C',
                 borderWidth: 1,
                 borderRadius: 10
             }]
@@ -113,12 +113,12 @@
         options: {
             responsive: true,
             plugins: {
-                legend: { position: 'top', labels: { color: '#c9bfe0' } },
+                legend: { position: 'top', labels: { color: '#5B5340' } },
                 title: { display: false }
             },
             scales: {
-                x: { ticks: { color: '#c9bfe0' }, grid: { color: 'rgba(255,255,255,0.08)' } },
-                y: { ticks: { color: '#c9bfe0' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+                x: { ticks: { color: '#5B5340' }, grid: { color: 'rgba(30,27,18,0.08)' } },
+                y: { ticks: { color: '#5B5340' }, grid: { color: 'rgba(30,27,18,0.08)' } }
             }
         }
     });
