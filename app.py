@@ -28,7 +28,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     database_url or 'sqlite:///campus_placement.db'
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = 'uploads'
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file
 
 # Ensure upload directory exists
@@ -329,25 +330,35 @@ def upload_resume():
     if 'resume' not in request.files:
         flash('No file selected', 'danger')
         return redirect(url_for('student_dashboard'))
-    
+
     file = request.files['resume']
     if file.filename == '':
         flash('No file selected', 'danger')
         return redirect(url_for('student_dashboard'))
-    
-    if file:
+
+    allowed_ext = {'pdf', 'txt'}
+    ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+    if ext not in allowed_ext:
+        flash('Only PDF or TXT resumes are supported', 'danger')
+        return redirect(url_for('student_dashboard'))
+
+    try:
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         filename = secure_filename(f"{student.id}_{uuid.uuid4().hex}_{file.filename}")
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
-        
+
         # Extract text from resume
         file.seek(0)  # Reset file pointer
         extracted_text = extract_text_from_resume(file)
-        
+
         student.resume_text = extracted_text
         db.session.commit()
-        
+
         flash('Resume uploaded and processed successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Could not upload resume: {str(e)}', 'danger')
     return redirect(url_for('student_dashboard'))
 
 @app.route('/student/apply/<int:job_id>')
