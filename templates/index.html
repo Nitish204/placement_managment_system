@@ -1,6 +1,20 @@
 <!-- templates/index.html -->
 {% extends "base.html" %}
 {% block content %}
+<style>
+.ticker-strip { background: linear-gradient(120deg, var(--accent-1), var(--accent-3)); color: #2A1600; font-weight: 700; font-size: 13px; padding: 9px 0; overflow: hidden; position: relative; z-index: 1; }
+.ticker-strip-track { display: inline-block; white-space: nowrap; padding-left: 100%; animation: tickerScroll 24s linear infinite; }
+.ticker-strip-track span { margin-right: 40px; }
+.ticker-strip-track span::before { content: "\25C6  "; }
+@keyframes tickerScroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+</style>
+<div class="ticker-strip"><div class="ticker-strip-track">
+    <span>Riya Sharma signs with Atlas Systems — &#8377;18L</span>
+    <span>6 new roles posted by Nimbus Labs</span>
+    <span>Karthik Reddy signs with Volt Energy — &#8377;22L</span>
+    <span>CS branch hits 92% placed</span>
+    <span>41 offers signed this week</span>
+</div></div>
 <div class="hero-section">
     <div class="container text-center">
         <div class="animate-fadeInUp mb-3">
