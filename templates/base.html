@@ -19,6 +19,8 @@
             --accent-2: #6D4FE0;
             --accent-3: #FFB627;
             --accent-4: #0FA898;
+            --accent-soft: rgba(232,150,12,0.12);
+            --accent-soft-strong: rgba(232,150,12,0.2);
             --glass: #FFFFFF;
             --glass-strong: #FFFCF4;
             --glass-border: #EAE0C8;
@@ -26,8 +28,8 @@
             --text-mid: #5B5340;
             --text-low: #9A917A;
             --shadow-soft: 0 20px 45px -24px rgba(30,27,18,0.18);
-            --radius-lg: 22px;
-            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-md: 13px;
             --container-max: 1240px;
         }
 
@@ -123,6 +125,13 @@
         .dropdown-item { color: var(--text-mid); padding: 10px 16px; }
         .dropdown-item:hover { background: var(--glass-strong); color: var(--text-hi); }
 
+        /* Role badge in navbar */
+        .role-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-soft); color: #B96F00; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em; padding: 7px 14px; border-radius: 999px; text-transform: uppercase; }
+        .role-badge i { font-size: 0.8rem; }
+        .role-badge.role-admin { background: rgba(109,79,224,0.12); color: var(--accent-2); }
+        .role-badge.role-company { background: rgba(15,168,152,0.12); color: #0B7A6F; }
+        .role-badge.role-student { background: var(--accent-soft); color: #B96F00; }
+
         /* ---------- Cards ---------- */
         .glass-card {
             background: var(--glass);
@@ -144,10 +153,15 @@
         .stat-card .stat-body p { font-size: 0.8rem; color: var(--text-low); margin: 0; text-transform: uppercase; letter-spacing: 0.05em; }
 
         /* Buttons */
-        .btn-gradient { background: linear-gradient(120deg, var(--accent-1), var(--accent-3)); border: none; color: #2A1600; padding: 10px 25px; border-radius: 999px; font-weight: 700; transition: all 0.25s ease; position: relative; }
-        .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -10px rgba(232,150,12,0.55); color: #2A1600; }
-        .btn-outline-gradient { background: transparent; border: 1.5px solid var(--accent-2); color: var(--accent-2); border-radius: 999px; padding: 8px 20px; font-weight: 600; transition: all 0.25s ease; }
-        .btn-outline-gradient:hover { background: linear-gradient(120deg, var(--accent-1), var(--accent-3)); border-color: transparent; color: #2A1600; }
+        .btn-gradient { background: var(--accent-soft); border: none; color: var(--accent-1); padding: 10px 22px; border-radius: 10px; font-weight: 600; font-size: 0.92rem; transition: all 0.2s ease; position: relative; }
+        .btn-gradient:hover { background: var(--accent-soft-strong); transform: translateY(-1px); color: var(--accent-1); }
+        .btn-gradient:active { transform: translateY(0) scale(0.98); }
+        .btn-outline-gradient { background: transparent; border: 1.5px solid var(--glass-border); color: var(--text-hi); border-radius: 10px; padding: 8.5px 20px; font-weight: 600; font-size: 0.92rem; transition: all 0.2s ease; }
+        .btn-outline-gradient:hover { background: var(--glass-strong); border-color: var(--text-low); color: var(--text-hi); }
+
+        /* Solid CTA — used sparingly for the single primary action per view */
+        .btn-solid { background: var(--accent-2); border: none; color: #fff; padding: 10px 22px; border-radius: 10px; font-weight: 600; font-size: 0.92rem; transition: all 0.2s ease; }
+        .btn-solid:hover { background: #1F2937; transform: translateY(-1px); color: #fff; }
 
         /* Tables */
         .custom-table { background: var(--glass); border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 4px 20px rgba(30,27,18,0.08); }
@@ -251,6 +265,12 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         {% if session.user_id %}
+                            <li class="nav-item d-flex align-items-center me-1">
+                                <span class="role-badge role-{{ session.user_role }}">
+                                    <i class="fas fa-{% if session.user_role == 'admin' %}shield-alt{% elif session.user_role == 'company' %}building{% else %}user-graduate{% endif %}"></i>
+                                    {{ session.user_role }}
+                                </span>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('dashboard') }}">
                                     <i class="fas fa-tachometer-alt"></i> Dashboard
