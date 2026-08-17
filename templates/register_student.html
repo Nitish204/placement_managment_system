@@ -6,7 +6,7 @@
 @keyframes cardIn { 0%{opacity:0;transform:translateY(40px) scale(0.96);} 100%{opacity:1;transform:translateY(0) scale(1);} }
 @keyframes robotDropIn { 0%{opacity:0;transform:translateY(-50px) scale(0.5) rotate(-8deg);} 60%{opacity:1;transform:translateY(6px) scale(1.05) rotate(3deg);} 100%{opacity:1;transform:translateY(0) scale(1) rotate(0);} }
 @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
-@keyframes glowPulse { 0%,100%{filter:drop-shadow(0 0 6px #4dd0c188);} 50%{filter:drop-shadow(0 0 14px #4dd0c1cc);} }
+@keyframes glowPulse { 0%,100%{filter:drop-shadow(0 0 6px #0FA89877);} 50%{filter:drop-shadow(0 0 14px #0FA898cc);} }
 
 .reg-wrap { display:flex; flex-direction:column; align-items:center; padding: 30px 16px 10px; }
 .mini-robot { width:88px; height:88px; margin-bottom:-22px; z-index:2; opacity:0; animation: robotDropIn 0.8s cubic-bezier(0.22,1,0.36,1) 0.1s both, float 3.5s ease-in-out 0.9s infinite, glowPulse 3.5s ease-in-out 0.9s infinite; }
