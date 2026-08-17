@@ -9,7 +9,7 @@
 @keyframes blink { 0%,90%,100%{transform:scaleY(1);} 95%{transform:scaleY(0.1);} }
 @keyframes sheen { 0%{transform:translateX(-130%) skewX(-12deg);} 100%{transform:translateX(230%) skewX(-12deg);} }
 @keyframes ringPulse { 0%,100%{opacity:0.5;transform:scale(1);} 50%{opacity:1;transform:scale(1.08);} }
-@keyframes glowPulse { 0%,100%{filter:drop-shadow(0 0 6px #a78bfa88);} 50%{filter:drop-shadow(0 0 18px #a78bfacc);} }
+@keyframes glowPulse { 0%,100%{filter:drop-shadow(0 0 6px #E8960C77);} 50%{filter:drop-shadow(0 0 18px #E8960Ccc);} }
 @keyframes riseUp { 0%{transform:translateY(0);opacity:0;} 10%{opacity:0.6;} 100%{transform:translateY(-420px);opacity:0;} }
 
 .login-stage { display:flex; align-items:center; justify-content:center; min-height:82vh; padding: 20px; position: relative; }
@@ -34,22 +34,22 @@
         <div class="robot-wrap" id="robotWrap">
             <svg width="120" height="120" viewBox="0 0 120 120">
                 <ellipse cx="60" cy="112" rx="30" ry="6" fill="#00000033"/>
-                <circle cx="60" cy="57" r="46" fill="none" stroke="#a78bfa" stroke-width="1.5" opacity="0.35" id="focusRing"/>
-                <rect x="30" y="30" width="60" height="55" rx="18" fill="#f5f3ff"/>
-                <rect x="30" y="30" width="60" height="55" rx="18" fill="none" stroke="#c4b5fd" stroke-width="2"/>
-                <circle cx="60" cy="14" r="5" fill="#c4b5fd"/>
-                <line x1="60" y1="19" x2="60" y2="30" stroke="#c4b5fd" stroke-width="3"/>
-                <rect x="18" y="50" width="22" height="10" rx="5" fill="#ddd6fe"/>
-                <circle cx="16" cy="55" r="7" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
-                <rect x="80" y="50" width="22" height="10" rx="5" fill="#ddd6fe"/>
-                <circle cx="104" cy="55" r="7" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <circle cx="60" cy="57" r="46" fill="none" stroke="#E8960C" stroke-width="1.5" opacity="0.35" id="focusRing"/>
+                <rect x="30" y="30" width="60" height="55" rx="18" fill="#FFF8E8"/>
+                <rect x="30" y="30" width="60" height="55" rx="18" fill="none" stroke="#F2CA82" stroke-width="2"/>
+                <circle cx="60" cy="14" r="5" fill="#E8960C"/>
+                <line x1="60" y1="19" x2="60" y2="30" stroke="#F2CA82" stroke-width="3"/>
+                <rect x="18" y="50" width="22" height="10" rx="5" fill="#FFE9BE"/>
+                <circle cx="16" cy="55" r="7" fill="#FFF8E8" stroke="#F2CA82" stroke-width="2"/>
+                <rect x="80" y="50" width="22" height="10" rx="5" fill="#FFE9BE"/>
+                <circle cx="104" cy="55" r="7" fill="#FFF8E8" stroke="#F2CA82" stroke-width="2"/>
                 <g id="eyeGroup">
-                    <rect x="43" y="48" width="15" height="18" rx="7" fill="#2d1b4e" class="eye" id="eyeL"/>
-                    <rect x="62" y="48" width="15" height="18" rx="7" fill="#2d1b4e" class="eye" id="eyeR"/>
-                    <circle cx="50.5" cy="60" r="1.6" fill="#a78bfa" id="pupilL" opacity="0"/>
-                    <circle cx="69.5" cy="60" r="1.6" fill="#a78bfa" id="pupilR" opacity="0"/>
+                    <rect x="43" y="48" width="15" height="18" rx="7" fill="#1E1B12" class="eye" id="eyeL"/>
+                    <rect x="62" y="48" width="15" height="18" rx="7" fill="#1E1B12" class="eye" id="eyeR"/>
+                    <circle cx="50.5" cy="60" r="1.6" fill="#6D4FE0" id="pupilL" opacity="0"/>
+                    <circle cx="69.5" cy="60" r="1.6" fill="#6D4FE0" id="pupilR" opacity="0"/>
                 </g>
-                <path id="mouth" d="M 50 72 Q 60 78 70 72" stroke="#2d1b4e" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path id="mouth" d="M 50 72 Q 60 78 70 72" stroke="#1E1B12" stroke-width="3" fill="none" stroke-linecap="round"/>
             </svg>
         </div>
 
