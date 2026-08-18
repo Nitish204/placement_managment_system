@@ -136,18 +136,35 @@
                 <h5 class="modal-title"><i class="fas fa-upload"></i> Upload Resume</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="{{ url_for('upload_resume') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ url_for('upload_resume') }}" enctype="multipart/form-data" id="resumeUploadForm">
                 <div class="modal-body">
                     <p>Upload your resume (PDF or TXT format). The system will extract text for AI-based screening.</p>
                     <input type="file" name="resume" class="form-control" accept=".pdf,.txt" required>
                     <small class="text-muted">Supported formats: PDF, TXT</small>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-gradient">Upload</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="resumeCancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-gradient" id="resumeUploadBtn">Upload</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    (function () {
+        var form = document.getElementById('resumeUploadForm');
+        var uploadBtn = document.getElementById('resumeUploadBtn');
+        var cancelBtn = document.getElementById('resumeCancelBtn');
+        if (form && uploadBtn) {
+            form.addEventListener('submit', function () {
+                uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Uploading&hellip;';
+                if (cancelBtn) cancelBtn.disabled = true;
+                // Note: on free-tier hosting the server may be cold-starting,
+                // which can take up to ~60s on the very first request after idle.
+            });
+        }
+    })();
+</script>
 {% endblock %}
