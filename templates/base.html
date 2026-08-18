@@ -312,7 +312,7 @@
         </nav>
     </div>
 
-    <div style="padding-top: 100px; position: relative; z-index: 1;">
+    <div style="padding-top: 100px; position: relative;">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="container mt-3">
@@ -337,17 +337,23 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Defensive cleanup: clear any stuck modal backdrop / locked scroll
-        // (e.g. leftover state from a previous page via back/forward cache,
-        // or a modal that failed to tear down cleanly).
-        function clearStuckModalState() {
-            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        // from a previous page (e.g. back/forward cache after a form submit).
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.modal-backdrop').forEach(function (el) { el.remove(); });
             document.body.classList.remove('modal-open');
             document.body.style.removeProperty('overflow');
             document.body.style.removeProperty('padding-right');
-        }
-        document.addEventListener('DOMContentLoaded', clearStuckModalState);
-        window.addEventListener('pageshow', (e) => { if (e.persisted) clearStuckModalState(); });
-
+        });
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                document.querySelectorAll('.modal-backdrop').forEach(function (el) { el.remove(); });
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('overflow');
+                document.body.style.removeProperty('padding-right');
+            }
+        });
+    </script>
+    <script>
         // Remove loader from flow once its fade-out finishes
         window.addEventListener('load', () => {
             const loader = document.getElementById('introLoader');
