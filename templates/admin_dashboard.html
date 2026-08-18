@@ -31,6 +31,13 @@
                 </div>
             </div>
 
+            {% if pending_companies_count > 0 %}
+            <a href="{{ url_for('admin_companies') }}" class="alert-custom d-flex align-items-center justify-content-between p-3 mb-4 text-decoration-none animate-fadeInUp" style="border-left: 3px solid var(--accent-1);">
+                <span><i class="fas fa-hourglass-half me-2" style="color: var(--accent-1);"></i><strong style="color: var(--text-hi);">{{ pending_companies_count }}</strong> compan{{ 'y is' if pending_companies_count == 1 else 'ies are' }} waiting for approval before they can post jobs.</span>
+                <span class="btn-outline-gradient btn-sm">Review now</span>
+            </a>
+            {% endif %}
+
             <!-- Stats Row -->
             <div class="row g-4 mb-4">
                 <div class="col-md-3"><div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-1), var(--accent-2));"><i class="fas fa-users"></i></div><div class="stat-body"><h3>{{ total_students }}</h3><p>Students</p></div></div></div>
