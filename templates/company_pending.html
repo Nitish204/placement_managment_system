@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container dashboard-container d-flex align-items-center justify-content-center" style="min-height: 60vh;">
+    <div class="glass-card p-5 text-center" style="max-width: 520px;">
+        {% if company.approval_status == 'rejected' %}
+            <div class="stat-icon mx-auto mb-3" style="background: linear-gradient(135deg, #E85B5B, #F0918C);"><i class="fas fa-times-circle"></i></div>
+            <h4 class="mb-2">Registration not approved</h4>
+            <p class="text-muted mb-0">Your company registration for <strong>{{ company.company_name }}</strong> was not approved by the placement cell. If you believe this is a mistake, please reach out to the admin team directly.</p>
+        {% else %}
+            <div class="stat-icon mx-auto mb-3" style="background: linear-gradient(135deg, var(--accent-1), var(--accent-3));"><i class="fas fa-hourglass-half"></i></div>
+            <h4 class="mb-2">Approval pending</h4>
+            <p class="text-muted mb-0">Thanks for registering <strong>{{ company.company_name }}</strong>! Your account is awaiting review by the placement cell. You'll get a notification here the moment you're approved and can start posting jobs.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
