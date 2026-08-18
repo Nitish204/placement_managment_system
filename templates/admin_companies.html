@@ -9,7 +9,7 @@
         <div class="table-responsive">
             <table class="table custom-table">
                 <thead>
-                    <tr><th>Company Name</th><th>Industry</th><th>Location</th><th>Website</th><th>Jobs Posted</th><th>Action</th></tr>
+                    <tr><th>Company Name</th><th>Industry</th><th>Location</th><th>Website</th><th>Status</th><th>Jobs Posted</th><th>Action</th></tr>
                 </thead>
                 <tbody>
                     {% for c in companies %}
@@ -18,8 +18,25 @@
                         <td>{{ c.industry }}</td>
                         <td>{{ c.location }}</td>
                         <td>{% if c.website %}<a href="{{ c.website }}" target="_blank">Link</a>{% else %}—{% endif %}</td>
+                        <td>
+                            {% if c.approval_status == 'approved' %}
+                                <span class="badge-status badge-placed">Approved</span>
+                            {% elif c.approval_status == 'rejected' %}
+                                <span class="badge-status badge-rejected">Rejected</span>
+                            {% else %}
+                                <span class="badge-status badge-applied">Pending</span>
+                            {% endif %}
+                        </td>
                         <td>{{ c.jobs|length }}</td>
-                        <td><a href="{{ url_for('delete_user', user_id=c.user_id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete company?')">Delete</a></td>
+                        <td class="d-flex gap-2">
+                            {% if c.approval_status != 'approved' %}
+                                <a href="{{ url_for('approve_company', company_id=c.id) }}" class="btn btn-sm btn-success">Approve</a>
+                            {% endif %}
+                            {% if c.approval_status != 'rejected' %}
+                                <a href="{{ url_for('reject_company', company_id=c.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Reject this company?')">Reject</a>
+                            {% endif %}
+                            <a href="{{ url_for('delete_user', user_id=c.user_id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete company?')">Delete</a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
