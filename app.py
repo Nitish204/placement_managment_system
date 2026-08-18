@@ -77,7 +77,8 @@ class CompanyProfile(db.Model):
     description = db.Column(db.Text)
     website = db.Column(db.String(200))
     location = db.Column(db.String(100))
-    
+    approval_status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
+
     user = db.relationship('User', backref='company_profile', uselist=False)
     jobs = db.relationship('JobPost', backref='company', lazy=True)
 
@@ -119,6 +120,17 @@ class PlacementRecord(db.Model):
     student = db.relationship('StudentProfile')
     job = db.relationship('JobPost')
     company = db.relationship('CompanyProfile')
+
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    message = db.Column(db.String(255), nullable=False)
+    link = db.Column(db.String(255))
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref='notifications')
 
 # ------------------------- Helper Functions -------------------------
 def login_required(f):
@@ -168,18 +180,56 @@ def extract_text_from_resume(file):
     
     return text.lower()
 
-def calculate_screening_score(resume_text, job_skills):
-    """Calculate match percentage between resume text and job required skills"""
+def calculate_screening_score(resume_text, job_skills, job_description=''):
+    """
+    Score how well a resume matches a job.
+    Blends two signals:
+      1. Skill coverage - % of explicitly required skills found in the resume
+      2. Semantic similarity - TF-IDF cosine similarity between resume and job
+         description+skills, which rewards overall contextual relevance
+         instead of just literal substring matches.
+    Falls back to pure skill-coverage matching if scikit-learn isn't available.
+    """
     if not resume_text or not job_skills:
         return 0.0
-    
-    resume_text = resume_text.lower()
+
+    resume_text_l = resume_text.lower()
     skills_list = [s.strip().lower() for s in job_skills.split(',') if s.strip()]
     if not skills_list:
         return 100.0
-    
-    matched = sum(1 for skill in skills_list if skill in resume_text)
-    return (matched / len(skills_list)) * 100
+
+    matched = sum(1 for skill in skills_list if skill in resume_text_l)
+    coverage_score = (matched / len(skills_list)) * 100
+
+    try:
+        from sklearn.feature_extraction.text import TfidfVectorizer
+        from sklearn.metrics.pairwise import cosine_similarity
+
+        job_text = (job_description or '') + ' ' + job_skills
+        vectorizer = TfidfVectorizer(stop_words='english')
+        tfidf = vectorizer.fit_transform([resume_text, job_text])
+        similarity_score = cosine_similarity(tfidf[0:1], tfidf[1:2])[0][0] * 100
+
+        # Blend: skill coverage anchors the score (recruiters care about hard
+        # requirements), similarity adds contextual/semantic signal on top.
+        final_score = (coverage_score * 0.6) + (similarity_score * 0.4)
+        return round(min(final_score, 100.0), 1)
+    except ImportError:
+        return round(coverage_score, 1)
+
+def notify(user_id, message, link=None):
+    """Create an in-app notification for a user."""
+    n = Notification(user_id=user_id, message=message, link=link)
+    db.session.add(n)
+
+@app.context_processor
+def inject_notifications():
+    if 'user_id' in session:
+        unread_count = Notification.query.filter_by(user_id=session['user_id'], is_read=False).count()
+        recent_notifications = Notification.query.filter_by(user_id=session['user_id']) \
+            .order_by(desc(Notification.created_at)).limit(6).all()
+        return dict(unread_notif_count=unread_count, recent_notifications=recent_notifications)
+    return dict(unread_notif_count=0, recent_notifications=[])
 
 # ------------------------- Routes -------------------------
 @app.route('/')
@@ -274,12 +324,19 @@ def register_company():
             industry=industry,
             description=description,
             website=website,
-            location=location
+            location=location,
+            approval_status='pending'
         )
         db.session.add(company)
         db.session.commit()
-        
-        flash('Company registration successful! Please login', 'success')
+
+        # Notify all admins so they see the pending company right away
+        admins = User.query.filter_by(role='admin').all()
+        for admin_user in admins:
+            notify(admin_user.id, f'New company registered: {company_name} (pending approval)', url_for('admin_companies'))
+        db.session.commit()
+
+        flash('Registration submitted! Your company is pending admin approval before you can post jobs.', 'info')
         return redirect(url_for('login'))
     return render_template('register_company.html')
 
@@ -375,7 +432,7 @@ def apply_job(job_id):
         return redirect(url_for('student_dashboard'))
     
     # Calculate screening score
-    score = calculate_screening_score(student.resume_text or '', job.required_skills or '')
+    score = calculate_screening_score(student.resume_text or '', job.required_skills or '', job.description or '')
     
     application = JobApplication(
         student_id=student.id,
@@ -415,6 +472,10 @@ def withdraw_application(app_id):
 @role_required('company')
 def company_dashboard():
     company = CompanyProfile.query.filter_by(user_id=session['user_id']).first()
+
+    if company.approval_status != 'approved':
+        return render_template('company_pending.html', company=company)
+
     jobs = JobPost.query.filter_by(company_id=company.id).all()
     
     total_jobs = len(jobs)
@@ -431,6 +492,10 @@ def company_dashboard():
 @role_required('company')
 def post_job():
     company = CompanyProfile.query.filter_by(user_id=session['user_id']).first()
+
+    if company.approval_status != 'approved':
+        flash('Your company must be approved by an admin before you can post jobs', 'warning')
+        return redirect(url_for('company_dashboard'))
     
     if request.method == 'POST':
         title = request.form.get('title')
@@ -487,6 +552,13 @@ def update_application_status(app_id):
         application.status = new_status
         application.remarks = remarks
         db.session.commit()
+
+        notify(
+            application.student.user_id,
+            f'Your application for "{application.job.title}" at {application.job.company.company_name} is now {new_status}',
+            url_for('student_dashboard')
+        )
+        db.session.commit()
         
         # If placed, create placement record
         if new_status == 'Placed':
@@ -517,13 +589,40 @@ def run_screening(job_id):
     
     # Update screening scores for all applications
     for app in job.applications:
-        score = calculate_screening_score(app.student.resume_text or '', job.required_skills or '')
+        score = calculate_screening_score(app.student.resume_text or '', job.required_skills or '', job.description or '')
         app.screening_score = score
     
     db.session.commit()
     flash(f'Screening scores updated for {len(job.applications)} applicants', 'success')
     
     return redirect(url_for('view_applications', job_id=job_id))
+
+@app.route('/notifications')
+@login_required
+def notifications():
+    all_notifications = Notification.query.filter_by(user_id=session['user_id']) \
+        .order_by(desc(Notification.created_at)).all()
+    Notification.query.filter_by(user_id=session['user_id'], is_read=False).update({'is_read': True})
+    db.session.commit()
+    return render_template('notifications.html', notifications=all_notifications)
+
+@app.route('/notifications/<int:notif_id>/open')
+@login_required
+def open_notification(notif_id):
+    notif = Notification.query.get_or_404(notif_id)
+    if notif.user_id != session['user_id']:
+        flash('Unauthorized', 'danger')
+        return redirect(url_for('dashboard'))
+    notif.is_read = True
+    db.session.commit()
+    return redirect(notif.link or url_for('notifications'))
+
+@app.route('/notifications/mark_all_read', methods=['POST'])
+@login_required
+def mark_all_notifications_read():
+    Notification.query.filter_by(user_id=session['user_id'], is_read=False).update({'is_read': True})
+    db.session.commit()
+    return redirect(request.referrer or url_for('notifications'))
 
 # ------------------------- Admin Dashboard -------------------------
 @app.route('/admin/dashboard')
@@ -536,6 +635,7 @@ def admin_dashboard():
     total_jobs = JobPost.query.count()
     total_applications = JobApplication.query.count()
     total_placements = PlacementRecord.query.count()
+    pending_companies_count = CompanyProfile.query.filter_by(approval_status='pending').count()
     
     # Placement analytics data
     placed_students = PlacementRecord.query.all()
@@ -573,7 +673,8 @@ def admin_dashboard():
                          branch_labels=branch_labels,
                          branch_data=branch_data,
                          recent_placements=recent_placements,
-                         company_stats=company_stats)
+                         company_stats=company_stats,
+                         pending_companies_count=pending_companies_count)
 
 @app.route('/admin/students')
 @login_required
@@ -586,8 +687,32 @@ def admin_students():
 @login_required
 @role_required('admin')
 def admin_companies():
-    companies = CompanyProfile.query.all()
+    companies = CompanyProfile.query.order_by(
+        db.case((CompanyProfile.approval_status == 'pending', 0), else_=1)
+    ).all()
     return render_template('admin_companies.html', companies=companies)
+
+@app.route('/admin/company/<int:company_id>/approve')
+@login_required
+@role_required('admin')
+def approve_company(company_id):
+    company = CompanyProfile.query.get_or_404(company_id)
+    company.approval_status = 'approved'
+    notify(company.user_id, f'Your company "{company.company_name}" has been approved! You can now post jobs.', url_for('company_dashboard'))
+    db.session.commit()
+    flash(f'{company.company_name} approved', 'success')
+    return redirect(url_for('admin_companies'))
+
+@app.route('/admin/company/<int:company_id>/reject')
+@login_required
+@role_required('admin')
+def reject_company(company_id):
+    company = CompanyProfile.query.get_or_404(company_id)
+    company.approval_status = 'rejected'
+    notify(company.user_id, f'Your company "{company.company_name}" registration was not approved.', None)
+    db.session.commit()
+    flash(f'{company.company_name} rejected', 'info')
+    return redirect(url_for('admin_companies'))
 
 @app.route('/admin/jobs')
 @login_required
@@ -617,9 +742,34 @@ def delete_user(user_id):
     return redirect(request.referrer or url_for('admin_dashboard'))
 
 # ------------------------- Create admin user if not exists -------------------------
+def run_migrations():
+    """
+    Lightweight column migration for existing databases (no Alembic in this project).
+    db.create_all() only creates missing tables, it never alters existing ones,
+    so newly added columns need to be patched in manually here.
+    """
+    from sqlalchemy import inspect, text
+    inspector = inspect(db.engine)
+    existing_tables = inspector.get_table_names()
+
+    if 'company_profiles' in existing_tables:
+        cols = [c['name'] for c in inspector.get_columns('company_profiles')]
+        if 'approval_status' not in cols:
+            with db.engine.begin() as conn:
+                conn.execute(text(
+                    "ALTER TABLE company_profiles ADD COLUMN approval_status VARCHAR(20) DEFAULT 'pending'"
+                ))
+                # Existing companies were already operating under the old
+                # no-approval-needed system, so grandfather them in as approved.
+                conn.execute(text(
+                    "UPDATE company_profiles SET approval_status = 'approved' WHERE approval_status IS NULL OR approval_status = 'pending'"
+                ))
+            print("Migrated: company_profiles.approval_status added (existing companies grandfathered as approved)")
+
 def init_db():
     with app.app_context():
         db.create_all()
+        run_migrations()
         # Create admin user if not exists
         admin = User.query.filter_by(role='admin').first()
         if not admin:
@@ -661,7 +811,8 @@ def init_db():
                 industry='Information Technology',
                 description='Leading IT services company',
                 website='www.techsolutions.com',
-                location='Bangalore'
+                location='Bangalore',
+                approval_status='approved'
             )
             db.session.add(demo_company)
             db.session.flush()
